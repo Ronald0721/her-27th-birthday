@@ -124,6 +124,7 @@
 
   .blow-hint { display: none; align-items: center; gap: 10px; margin-top: 6px; }
   .blow-hint.show { display: flex; }
+
   .blow-dot {
     width: 11px; height: 11px;
     background: var(--rose); border-radius: 50%;
@@ -252,6 +253,98 @@
   .letter-container::-webkit-scrollbar-track { background: var(--blush); }
   .letter-container::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 2px; }
 
+  /* CORNER PHOTO */
+  .corner-photo {
+    position: absolute;
+    top: 44px;
+    right: 36px;
+    width: 72px;
+    cursor: pointer;
+  }
+  .corner-photo-inner {
+    background: white;
+    padding: 4px 4px 18px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    transform: rotate(2.5deg);
+    transition: transform 0.3s ease;
+    border-radius: 1px;
+  }
+  .corner-photo-inner:hover { transform: rotate(0deg) scale(1.06); }
+  .corner-photo img {
+    width: 64px; height: 64px;
+    object-fit: cover;
+    display: block;
+    border-radius: 1px;
+  }
+  .corner-photo-placeholder {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #fce8ef 0%, #f4c0d0 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 1.5px dashed rgba(232,121,154,0.5);
+    border-radius: 1px;
+    gap: 2px;
+  }
+  .corner-photo-placeholder span:first-child { font-size: 1.4rem; }
+  .corner-photo-placeholder span:last-child {
+    font-size: 0.45rem;
+    color: var(--rose);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* LIGHTBOX */
+  #lightbox {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.92);
+    align-items: center; justify-content: center;
+    cursor: zoom-out;
+  }
+  #lightbox.show { display: flex; }
+  #lightbox img {
+    max-width: 92vw; max-height: 92vh;
+    border-radius: 4px;
+    box-shadow: 0 0 60px rgba(232,121,154,0.3);
+    animation: lbPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes lbPop {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  #lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    color: rgba(255,255,255,0.7); font-size: 2rem;
+    cursor: pointer; line-height: 1;
+    transition: color 0.2s;
+  }
+  #lightbox-close:hover { color: white; }
+
+  /* LETTER ICONS */
+  .letter-icons {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin: 22px 0 6px;
+    opacity: 0.55;
+  }
+  .letter-icon {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .letter-icon span:first-child {
+    font-size: 1.5rem;
+    filter: saturate(0.7);
+  }
+  .letter-icon span:last-child {
+    font-size: 0.52rem;
+    color: #b08090;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
   .back-btn {
     margin-top: 16px;
     padding: 10px 28px;
@@ -378,22 +471,10 @@
           <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#00000066"/>
         </filter>
       </defs>
-      <!-- stick for "2": centered at x=150, attached at bottom of digit y=44, into cake -->
       <rect x="148.5" y="44" width="3" height="42" rx="1.5" fill="#d4a0b0"/>
-      <!-- stick for "7": centered at x=172, same height -->
       <rect x="170.5" y="44" width="3" height="42" rx="1.5" fill="#d4a0b0"/>
-      <!-- "2" digit -->
-      <text x="150" y="44" text-anchor="middle"
-            font-family="Georgia, 'Times New Roman', serif"
-            font-size="36" font-weight="bold"
-            fill="#ffffff"
-            filter="url(#textshadow)">2</text>
-      <!-- "7" digit -->
-      <text x="172" y="44" text-anchor="middle"
-            font-family="Georgia, 'Times New Roman', serif"
-            font-size="36" font-weight="bold"
-            fill="#ffffff"
-            filter="url(#textshadow)">7</text>
+      <text x="150" y="44" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="bold" fill="#ffffff" filter="url(#textshadow)">2</text>
+      <text x="172" y="44" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="bold" fill="#ffffff" filter="url(#textshadow)">7</text>
 
       <!-- Candles drawn by JS -->
       <g id="candles-g"></g>
@@ -401,15 +482,15 @@
   </div>
 
   <div id="cake-bottom" style="opacity:0;transition:opacity 1.2s ease;pointer-events:none;display:flex;flex-direction:column;align-items:center;width:100%;text-align:center;">
-  <div class="wish-text" id="wish-text">Make a wish first… ✨</div>
-  <button class="mic-btn" id="mic-btn" onclick="startListening()">Ready to Blow</button>
-  <div class="mic-status" id="mic-status"></div>
-  <div class="blow-hint" id="blow-hint">
-    <div class="blow-dot"></div>
-    <span style="color:var(--cream);font-style:italic;font-size:1rem;">Now blow into your mic… 💨</span>
-    <div class="blow-dot"></div>
+    <div class="wish-text" id="wish-text">Make a wish first… ✨</div>
+    <button class="mic-btn" id="mic-btn" onclick="startListening()">🎤 &nbsp;Ready to Blow</button>
+    <div class="mic-status" id="mic-status"></div>
+    <div class="blow-hint" id="blow-hint">
+      <div class="blow-dot"></div>
+      <span style="color:var(--cream);font-style:italic;font-size:1rem;">Now blow into your mic… 💨</span>
+      <div class="blow-dot"></div>
+    </div>
   </div>
-  </div><!-- end cake-bottom -->
 </div>
 
 <!-- ========== PAGE 2: FIREWORKS ========== -->
@@ -417,7 +498,7 @@
   <canvas id="fireworks-canvas"></canvas>
   <div class="bday-msg">
     <h1>Happy Birthday! 🎉</h1>
-    <!-- <p>You are loved more than words can say</p> -->
+    <p>You are loved more than words can say</p>
   </div>
   <div class="envelope-wrap" id="envelope-wrap" onclick="openLetter()">
     <svg class="env-svg" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
@@ -434,19 +515,35 @@
 <!-- ========== PAGE 3: LETTER ========== -->
 <div class="page" id="letter-page">
   <div class="letter-container">
+    <!-- CORNER BABY PHOTO — replace baby.jpg with your actual filename -->
+    <div class="corner-photo" onclick="openLightbox()">
+      <div class="corner-photo-inner">
+        <img src="assets/my_baby.jpeg" alt="her" style="width:64px;height:64px;object-fit:cover;display:block;border-radius:1px;"/>
+      </div>
+    </div>
     <div class="letter-date" id="letter-date"></div>
-    <div class="letter-dear">My dearest love,</div>
+    <div class="letter-dear">Hey baby,</div>
     <div class="letter-divider"></div>
     <div class="letter-body">
-      <p>Twenty-seven years ago, the universe conspired to bring you into this world — and I truly believe it has never done anything more beautiful since.</p>
-      <p>You make ordinary Tuesdays feel like something worth remembering. You make me laugh in the middle of the night over the smallest, silliest things. You make every room we walk into together feel like the only room that matters.</p>
-      <p>I love the way your eyes catch light when you're excited about something. I love how deeply you care, how fiercely you love, and how you somehow make everyone around you feel warmer just by being there.</p>
-      <p>On this birthday, I want you to know one thing above all else: you deserve every single wish those 27 candles carried. Every joy, every adventure, every quiet morning and loud night — all of it. You deserve all of it.</p>
-      <p>Thank you for choosing me every day. Thank you for being the most wonderful person I've ever known. This year, and every year, I'll be right here beside you.</p>
-      <p>Here's to twenty-seven — and forever after.</p>
+      <p>Happy 27th Birthday.</p>
+      <p>It's a wonderful thing to think that it has been 27 years since you came into this world and more than a decade since I've known you. I still remember the first version of you I got to know. That kind, friendly, and study-first person. Back then, I saw someone with a bright future and a gentle heart, and I was drawn to that even from a distance.</p>
+      <p>As we became friends, that initial impression didn't just hold true but deepened. I was lucky enough to witness the layers beneath ng pagkatao mo. You were caring, sweet, independent, and so genuine. That's when I really started to appreciate who you are. That foundation of friendship was, and always will be, one of the most precious gifts in my life.</p>
+      <p>This year has been something else entirely. It has been a privilege getting to know you not just as a friend, but as the woman you are in your most honest, beautiful, and complete form. I've seen the makulit side that makes me laugh every time, your jolly spirit that instantly improves my mood, and also your matampuhin moments, which I've come to understand are just part of your deeply feeling heart. You've let me see your vulnerable side, trusting me with the weight you carry and the things you face. And in doing so, I've witnessed a strength and understanding in you na hindi basta basta. Every day I spend with you, I see more clearly why the world and God continue to bless you.</p>
+      <p>And the world continues to be blessed by your presence too. I love the way your eyes catch the light, sparkling with an uncontainable joy when you're excited about something, whether it's a new idea, a silly joke, or a simple, beautiful moment. I love the depth of your care. I love how you love. And even more than that, I love your unwavering ability to find the positive side of everything. I pray that this beautiful optimism only grows stronger. I pray that the world never changes that, never changes you. I pray it just continues to protect your heart, serving as a shield from anything that would dare to hurt it.</p>
+      <p>I pray you stay healthy. I pray you heal from the wounds you've opened up to me about and also from the ones you're still fighting alone. Please remember you don't have to carry everything by yourself. There are people who want to be there for you. And I'm one of them. Always.</p>
+      <p>On your birthday, I just want you to know one thing. You deserve every single wish those 27 candles carried. Every happiness. Every adventure. Every blessing coming your way. You deserve all the good things in life.</p>
+      <p>Thank you for being the most amazing person I've ever known.</p>
+      <p>I'll be right here. This year, next year, and all the years after.</p>
+      <p>Happy 27th my love of my life. I love you.</p>
+    </div>
+
+    <div class="letter-icons">
+      <div class="letter-icon"><span>🌄</span><span></span></div>
+      <div class="letter-icon"><span><img src="assets/kuromi.png" alt="kuromi"/></span><span></span></div>
+      <div class="letter-icon"><span>🌅</span><span></span></div>
     </div>
     <div class="letter-divider"></div>
-    <div class="letter-sign">Forever yours 🌹</div>
+    <div class="letter-sign">Forever yours 😽</div>
   </div>
   <button class="back-btn" onclick="goBack()">↩ Back to the celebration</button>
 </div>
@@ -468,14 +565,9 @@
 (function() {
   const g = document.getElementById('candles-g');
   const cols = ['#ffcc44','#ff8ab4','#a8e6cf','#ffd3a0','#c9b1ff','#80d8ff','#ff9eb5','#b5ead7','#ffeaa7'];
-
-  // 27 positions across 3 tiers
   const positions = [];
-  // top tier (8): y=84
   for (let i=0;i<8;i++) positions.push({x:106+i*16, y:84});
-  // mid tier (10): y=138
   for (let i=0;i<10;i++) positions.push({x:75+i*17, y:138});
-  // bot tier (9): y=205
   for (let i=0;i<9;i++) positions.push({x:58+i*26, y:205});
 
   positions.forEach((p,i) => {
@@ -483,21 +575,18 @@
     const fd  = (0.28+Math.random()*0.38).toFixed(2);
     const dl  = (Math.random()*0.5).toFixed(2);
 
-    // body
     const body = document.createElementNS('http://www.w3.org/2000/svg','rect');
     body.setAttribute('x',p.x-3); body.setAttribute('y',p.y-17);
     body.setAttribute('width',6); body.setAttribute('height',17);
     body.setAttribute('rx',2); body.setAttribute('fill',col);
     g.appendChild(body);
 
-    // wick
     const wick = document.createElementNS('http://www.w3.org/2000/svg','line');
     wick.setAttribute('x1',p.x); wick.setAttribute('y1',p.y-17);
     wick.setAttribute('x2',p.x); wick.setAttribute('y2',p.y-21);
     wick.setAttribute('stroke','#666'); wick.setAttribute('stroke-width','1.2');
     g.appendChild(wick);
 
-    // glow circle
     const glow = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
     glow.setAttribute('cx',p.x); glow.setAttribute('cy',p.y-26);
     glow.setAttribute('rx',7); glow.setAttribute('ry',7);
@@ -505,44 +594,45 @@
     glow.id = `glow${i}`;
     g.appendChild(glow);
 
-    // flame group — clean teardrop
     const fg = document.createElementNS('http://www.w3.org/2000/svg','g');
     fg.classList.add('flame');
     fg.id = `flame${i}`;
     fg.style.setProperty('--fd', fd+'s');
     fg.style.animationDelay = dl+'s';
 
-    // Teardrop: wide at base, pointed tip at top
     const cx=p.x, base=p.y-21;
-    // outer orange flame
     const f1 = document.createElementNS('http://www.w3.org/2000/svg','path');
     f1.setAttribute('d',`M ${cx},${base-11} C ${cx+4.5},${base-5} ${cx+4.5},${base} ${cx},${base} C ${cx-4.5},${base} ${cx-4.5},${base-5} ${cx},${base-11}`);
     f1.setAttribute('fill','#ff7700');
     fg.appendChild(f1);
-    // inner yellow flame
     const f2 = document.createElementNS('http://www.w3.org/2000/svg','path');
     f2.setAttribute('d',`M ${cx},${base-8} C ${cx+2.8},${base-4} ${cx+2.8},${base-1} ${cx},${base-1} C ${cx-2.8},${base-1} ${cx-2.8},${base-4} ${cx},${base-8}`);
     f2.setAttribute('fill','#ffe44a');
     fg.appendChild(f2);
-    // hot white core
     const fc = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
     fc.setAttribute('cx',cx); fc.setAttribute('cy',base-3);
     fc.setAttribute('rx',1.1); fc.setAttribute('ry',1.8);
     fc.setAttribute('fill','#fffff0');
     fg.appendChild(fc);
-
     g.appendChild(fg);
   });
 })();
 
+// ===== LIGHTBOX =====
+function openLightbox() {
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+}
+
 // ===== ENTRY POINT =====
 function beginExperience() {
-  // Hide splash
   const splash = document.getElementById('splash');
   splash.classList.add('hide');
   setTimeout(() => splash.remove(), 900);
 
-  // Play tune once — when done, reveal wish + button
   playHappyBirthdayOnce(99999, function() {
     const cb = document.getElementById('cake-bottom');
     const mp = document.getElementById('music-playing');
@@ -554,7 +644,7 @@ function beginExperience() {
   });
 }
 
-// ===== COUNTDOWN 3-2-1 then fireworks =====
+// ===== COUNTDOWN =====
 function startCountdown(onDone) {
   const cd  = document.getElementById('countdown');
   const num = document.getElementById('countdown-num');
@@ -565,9 +655,8 @@ function startCountdown(onDone) {
   const tick = setInterval(() => {
     count--;
     if (count > 0) {
-      // Re-trigger animation
       num.style.animation = 'none';
-      num.offsetHeight; // reflow
+      num.offsetHeight;
       num.style.animation = '';
       num.textContent = count;
     } else {
@@ -576,10 +665,7 @@ function startCountdown(onDone) {
       num.offsetHeight;
       num.style.animation = '';
       num.textContent = '🎉';
-      setTimeout(() => {
-        cd.classList.remove('show');
-        onDone();
-      }, 600);
+      setTimeout(() => { cd.classList.remove('show'); onDone(); }, 600);
     }
   }, 900);
 }
@@ -589,7 +675,9 @@ let audioCtx, analyser, micStream, blowInterval;
 let flamesLeft = 27;
 
 async function startListening() {
-  const btn    = document.getElementById('mic-btn');
+  const btn = document.getElementById('mic-btn');
+  if (btn.disabled) return;
+  btn.disabled = true;
   const status = document.getElementById('mic-status');
   const hint   = document.getElementById('blow-hint');
 
@@ -601,7 +689,6 @@ async function startListening() {
     analyser.fftSize = 256;
     src.connect(analyser);
 
-    btn.disabled = true;
     btn.textContent = '🎙️  Listening…';
     hint.classList.add('show');
     status.textContent = 'Take a deep breath…';
@@ -613,13 +700,11 @@ async function startListening() {
       analyser.getByteFrequencyData(data);
       const low  = data.slice(0, 18).reduce((a,b) => a+b, 0) / 18;
       const total= data.reduce((a,b) => a+b, 0) / data.length;
-
       if (low > 55 && total > 28) {
         blowFrames++;
         const blow = Math.min(Math.ceil(blowFrames / 2.5), flamesLeft);
         extinguish(blow);
-        if (flamesLeft > 0)
-          status.textContent = `${27 - flamesLeft} out… keep blowing! 💨`;
+        if (flamesLeft > 0) status.textContent = `${27 - flamesLeft} out… keep blowing! 💨`;
       } else {
         blowFrames = Math.max(0, blowFrames - 1);
       }
@@ -627,6 +712,7 @@ async function startListening() {
 
   } catch(e) {
     document.getElementById('mic-status').textContent = 'Mic access needed — please allow it and try again!';
+    btn.disabled = false;
   }
 }
 
@@ -666,8 +752,6 @@ function goToFireworks() {
 }
 
 function openLetter() {
-  document.getElementById('letter-date').textContent =
-    new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   stopFireworks();
   showPage('letter-page');
   addPetals();
@@ -684,10 +768,7 @@ const canvas = document.getElementById('fireworks-canvas');
 const ctx2   = canvas.getContext('2d');
 let fwParts  = [], fwFrame, fwTimer, fwOn = false;
 
-function resizeCanvas() {
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
@@ -707,13 +788,11 @@ class Particle {
     this.life-=this.decay;
   }
   draw() {
-    ctx2.save();
     ctx2.globalAlpha = Math.max(0,this.life);
     ctx2.beginPath();
     ctx2.arc(this.x,this.y,this.r,0,Math.PI*2);
     ctx2.fillStyle = this.col;
-    ctx2.shadowBlur = 9; ctx2.shadowColor = this.col;
-    ctx2.fill(); ctx2.restore();
+    ctx2.fill();
   }
 }
 
@@ -721,26 +800,25 @@ function burst() {
   const x = 80+Math.random()*(canvas.width-160);
   const y = 60+Math.random()*(canvas.height*0.55);
   const c = fwCols[Math.floor(Math.random()*fwCols.length)];
-  for (let i=0;i<90;i++) fwParts.push(new Particle(x,y,c));
-  for (let i=0;i<14;i++) {
-    const p = new Particle(x,y,'#ffffff');
-    p.r=1.4; p.decay=0.03; fwParts.push(p);
-  }
+  for (let i=0;i<45;i++) fwParts.push(new Particle(x,y,c));
+  for (let i=0;i<6;i++) { const p=new Particle(x,y,'#ffffff'); p.r=1.2; p.decay=0.04; fwParts.push(p); }
 }
 
 function fwLoop() {
   if (!fwOn) return;
-  ctx2.fillStyle='rgba(5,2,8,0.17)';
+  ctx2.globalAlpha = 1;
+  ctx2.fillStyle='rgba(5,2,8,0.2)';
   ctx2.fillRect(0,0,canvas.width,canvas.height);
   fwParts = fwParts.filter(p=>p.life>0);
   fwParts.forEach(p=>{p.tick();p.draw();});
+  ctx2.globalAlpha = 1;
   fwFrame = requestAnimationFrame(fwLoop);
 }
 
 function startFireworks() {
   fwOn=true; fwParts=[];
-  burst(); burst();
-  fwTimer = setInterval(()=>{ const n=1+Math.floor(Math.random()*3); for(let i=0;i<n;i++) burst(); }, 650);
+  burst();
+  fwTimer = setInterval(()=>{ burst(); }, 1100);
   fwLoop();
 }
 function stopFireworks() {
@@ -769,112 +847,29 @@ function removePetals() {
   petalEls=[];
 }
 
-// ===== SOUND ENGINE (Web Audio API - no external files needed) =====
+// ===== SOUND ENGINE =====
 let sndCtx = null;
-
 function getSndCtx() {
   if (!sndCtx) sndCtx = new (window.AudioContext || window.webkitAudioContext)();
   return sndCtx;
 }
 
-// Soft whoosh when a candle blows out
-function playCandlePuff() {
-  try {
-    const ac = getSndCtx();
-    const buf = ac.createBuffer(1, ac.sampleRate * 0.18, ac.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2) * 0.35;
-    }
-    const src = ac.createBufferSource();
-    src.buffer = buf;
-    const filt = ac.createBiquadFilter();
-    filt.type = 'highpass'; filt.frequency.value = 400;
-    const gain = ac.createGain();
-    gain.gain.setValueAtTime(0.5, ac.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.18);
-    src.connect(filt); filt.connect(gain); gain.connect(ac.destination);
-    src.start();
-  } catch(e) {}
-}
-
-// Firework launch whistle + boom + crackle
-function playFireworkBoom() {
-  try {
-    const ac = getSndCtx();
-    const now = ac.currentTime;
-
-    // Whistle ascend
-    const wOsc = ac.createOscillator();
-    const wGain = ac.createGain();
-    wOsc.type = 'sine';
-    wOsc.frequency.setValueAtTime(300, now);
-    wOsc.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
-    wGain.gain.setValueAtTime(0.15, now);
-    wGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-    wOsc.connect(wGain); wGain.connect(ac.destination);
-    wOsc.start(now); wOsc.stop(now + 0.28);
-
-    // Boom (noise burst at boom time)
-    const boomTime = now + 0.28;
-    const boomBuf = ac.createBuffer(1, ac.sampleRate * 0.4, ac.sampleRate);
-    const bd = boomBuf.getChannelData(0);
-    for (let i = 0; i < bd.length; i++) {
-      bd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bd.length, 1.5);
-    }
-    const boomSrc = ac.createBufferSource();
-    boomSrc.buffer = boomBuf;
-    const boomFilt = ac.createBiquadFilter();
-    boomFilt.type = 'lowpass'; boomFilt.frequency.value = 180;
-    const boomGain = ac.createGain();
-    boomGain.gain.setValueAtTime(0, boomTime - 0.001);
-    boomGain.gain.linearRampToValueAtTime(1.2, boomTime + 0.01);
-    boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 0.4);
-    boomSrc.connect(boomFilt); boomFilt.connect(boomGain); boomGain.connect(ac.destination);
-    boomSrc.start(boomTime);
-
-    // Crackle sparkles
-    for (let s = 0; s < 8; s++) {
-      const st = boomTime + Math.random() * 0.5;
-      const crackBuf = ac.createBuffer(1, ac.sampleRate * 0.06, ac.sampleRate);
-      const cd = crackBuf.getChannelData(0);
-      for (let i = 0; i < cd.length; i++) {
-        cd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / cd.length, 3);
-      }
-      const cSrc = ac.createBufferSource();
-      cSrc.buffer = crackBuf;
-      const cFilt = ac.createBiquadFilter();
-      cFilt.type = 'bandpass';
-      cFilt.frequency.value = 2000 + Math.random() * 4000;
-      const cGain = ac.createGain();
-      cGain.gain.setValueAtTime(0.3 + Math.random() * 0.3, st);
-      cGain.gain.exponentialRampToValueAtTime(0.001, st + 0.06);
-      cSrc.connect(cFilt); cFilt.connect(cGain); cGain.connect(ac.destination);
-      cSrc.start(st);
-    }
-  } catch(e) {}
-}
-
-// Happy Birthday melody (C D E C E D C - simplified tune)
-// Notes: C4=261.6, D4=293.7, E4=329.6, F4=349.2, G4=392, A4=440
-let bdayGeneration = 0;   // incremented on every stop — orphaned callbacks self-cancel
+let bdayGeneration = 0;
 let bdayLoopTimer = null;
-let bdayOscillators = []; // track all live oscillators so we can hard-stop them
+let bdayOscillators = [];
 
 function playHappyBirthdayOnce(gen, oneShot) {
-  // If generation changed (and not a one-shot call), this loop instance has been cancelled
   if (gen !== 99999 && gen !== bdayGeneration) return;
-
   try {
     const ac = getSndCtx();
-    const C4=261.6, D4=293.7, E4=329.6, F4=349.2, G4=392.0, A4=440.0, B4=493.9, C5=523.3;
+    const C4=261.6, D4=293.7, F4=349.2, G4=392.0, A4=440.0, B4=493.9, C5=523.3;
+    const E4=329.6, Bb4=466.2;
     const notes = [
       [C4,0.3],[C4,0.15],[D4,0.45],[C4,0.45],[F4,0.45],[E4,0.9],
       [C4,0.3],[C4,0.15],[D4,0.45],[C4,0.45],[G4,0.45],[F4,0.9],
       [C4,0.3],[C4,0.15],[C5,0.45],[A4,0.45],[F4,0.45],[E4,0.45],[D4,0.9],
-      [B4,0.3],[B4,0.15],[A4,0.45],[F4,0.45],[G4,0.45],[F4,1.1],
+      [Bb4,0.3],[Bb4,0.15],[A4,0.45],[F4,0.45],[G4,0.45],[F4,1.1],
     ];
-
     let t = ac.currentTime + 0.1;
     let totalDur = 0;
     notes.forEach(([freq, dur]) => {
@@ -882,7 +877,7 @@ function playHappyBirthdayOnce(gen, oneShot) {
       const osc  = ac.createOscillator();
       const osc2 = ac.createOscillator();
       const gain = ac.createGain();
-      osc.type = 'sine';  osc.frequency.value = freq;
+      osc.type = 'sine'; osc.frequency.value = freq;
       osc2.type = 'sine'; osc2.frequency.value = freq * 2;
       const g2 = ac.createGain(); g2.gain.value = 0.18;
       gain.gain.setValueAtTime(0, t);
@@ -896,18 +891,12 @@ function playHappyBirthdayOnce(gen, oneShot) {
       totalDur += dur * 0.95;
       t += dur * 0.95;
     });
-
-    // Schedule next loop or one-shot callback
     const capturedGen = gen;
     const capturedOneShot = oneShot;
     bdayLoopTimer = setTimeout(() => {
-      if (capturedOneShot) {
-        capturedOneShot();  // one-shot: just call the callback, don't loop
-      } else {
-        playHappyBirthdayOnce(capturedGen);
-      }
+      if (capturedOneShot) { capturedOneShot(); }
+      else { playHappyBirthdayOnce(capturedGen); }
     }, (totalDur + 0.5) * 1000);
-
   } catch(e) {}
 }
 
@@ -918,31 +907,16 @@ function playHappyBirthday() {
 }
 
 function stopHappyBirthday() {
-  bdayGeneration++;                        // invalidates all pending callbacks
+  bdayGeneration++;
   if (bdayLoopTimer) { clearTimeout(bdayLoopTimer); bdayLoopTimer = null; }
-  // Hard-stop any oscillators that are still running
   bdayOscillators.forEach(o => { try { o.stop(); } catch(e) {} });
   bdayOscillators = [];
 }
-
-// Gentle shimmer when all candles out
-function playWishMade() {
-  try {
-    const ac = getSndCtx();
-    const freqs = [523, 659, 784, 1047, 1319];
-    freqs.forEach((f, i) => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      const t = ac.currentTime + i * 0.08;
-      osc.type = 'sine'; osc.frequency.value = f;
-      gain.gain.setValueAtTime(0, t);
-      gain.gain.linearRampToValueAtTime(0.18, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.start(t); osc.stop(t + 0.72);
-    });
-  } catch(e) {}
-}
 </script>
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <div id="lightbox-close" onclick="closeLightbox()">✕</div>
+  <img src="assets/my_baby.jpeg" alt="her"/>
+</div>
 </body>
 </html>
